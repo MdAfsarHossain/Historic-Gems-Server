@@ -35,6 +35,22 @@ const client = new MongoClient(uri, {
 });
 
 // Verify Token
+const verifyToken = (req, res, next) => {
+  const token = req.cookies?.token;
+  if (!token) return res.status(401).send({ message: "unauthorized access" });
+  if (token) {
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+      if (err) {
+        // console.log(err);
+        return res.status(401).send({ message: "unauthorized access" });
+      }
+      // console.log(decoded);
+
+      req.user = decoded;
+      next();
+    });
+  }
+};
 
 async function run() {
   try {
