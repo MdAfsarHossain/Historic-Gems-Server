@@ -256,6 +256,22 @@ async function run() {
     });
 
     // ALL Delete Request
+    app.delete("/single-artifact/:id", verifyToken, async (req, res) => {
+      const id = req?.params?.id;
+      const email = req?.query?.email;
+      const tokenEmail = req?.user?.email;
+      // console.log("User Email: ", email);
+      // console.log("Token Email: ", tokenEmail);
+
+      if (tokenEmail !== email) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+
+      // console.log("delete", id);
+      const query = { _id: new ObjectId(id) };
+      const result = await artifactsCollection.deleteOne(query);
+      res.send(result);
+    });
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
