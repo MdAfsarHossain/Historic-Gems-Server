@@ -224,6 +224,36 @@ async function run() {
     });
 
     // ALL PATCH requests
+    app.put("/single-artifact/:id", verifyToken, async (req, res) => {
+      const id = req?.params?.id;
+
+      const email = req?.query?.email;
+      const tokenEmail = req?.user?.email;
+      // console.log("User Email: ", email);
+      // console.log("Token Email: ", tokenEmail);
+
+      if (tokenEmail !== email) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+
+      const newUpdateData = req?.body;
+      // console.log(id, newUpdateData);
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          ...newUpdateData,
+        },
+      };
+
+      const result = await artifactsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+
+      res.send(result);
+    });
 
     // ALL Delete Request
 
