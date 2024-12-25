@@ -175,6 +175,19 @@ async function run() {
     });
 
     // Get Specific users all added artifacts
+    app.get("/my-artifacts/:email", verifyToken, async (req, res) => {
+      const email = req?.params?.email;
+      const tokenEmail = req?.user?.email;
+
+      if (tokenEmail !== email) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+
+      // console.log(email);
+      const query = { author_email: email };
+      const result = await artifactsCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // Liked artifacts
 
