@@ -204,6 +204,24 @@ async function run() {
     });
 
     // Check Liked
+    app.get("/check-liked", verifyToken, async (req, res) => {
+      const id = req?.query?.id;
+      const email = req?.query?.email;
+      // console.log("Email: ", email);
+      // console.log("id: ", id);
+      const query = {
+        id: id,
+        liked_by: email,
+      };
+      const alreadyLiked = await likedArtifactsCollection.findOne(query);
+
+      if (alreadyLiked) {
+        // console.log("already liked");
+        return res.send({ likedStatus: true });
+      }
+      // console.log("does not liked");
+      res.send({ likedStatus: false });
+    });
 
     // ALL PATCH requests
 
