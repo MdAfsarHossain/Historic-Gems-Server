@@ -166,6 +166,13 @@ async function run() {
     });
 
     // Get Single Artifact details
+    app.get("/single-artifact/:id", verifyToken, async (req, res) => {
+      const id = req?.params?.id;
+      // console.log(id);
+      const query = { _id: new ObjectId(id) };
+      const result = await artifactsCollection.findOne(query);
+      res.send(result);
+    });
 
     // Get Specific users all added artifacts
 
