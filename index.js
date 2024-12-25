@@ -144,6 +144,16 @@ async function run() {
     });
 
     // ALL GET requests
+    app.get("/all-artifacts", async (req, res) => {
+      const searchQuery = req?.query?.search;
+      let query = {};
+      if (searchQuery) {
+        query.artifact_name = { $regex: searchQuery, $options: "i" };
+      }
+
+      const result = await artifactsCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // Top Artifacts
 
