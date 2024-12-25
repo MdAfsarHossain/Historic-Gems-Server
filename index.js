@@ -104,6 +104,44 @@ async function run() {
     });
 
     // Create new liked artifacts
+    app.post("/liked-artifact/:email", verifyToken, async (req, res) => {
+      const email = req?.params?.email;
+      const likedData = req?.body;
+      const { likedStatus } = likedData;
+
+      let result;
+      if (likedStatus === "increase") {
+        result = await likedArtifactsCollection.insertOne(likedData);
+        const updateDoc = {
+          $inc: { liked_count: 1 },
+        };
+        const filter = {
+          _id: new ObjectId(likedData.id),
+        };
+        const options = {
+          upsert: true,
+        };
+        await artifactsCollection.updateOne(filter, updateDoc, options);
+      } else {
+        result = await likedArtifactsCollection.deleteOne({
+          id: likedData.id,
+          liked_by: likedData.liked_by,
+        });
+
+        const updateDoc = {
+          $inc: { liked_count: -1 },
+        };
+        const filter = {
+          _id: new ObjectId(likedData.id),
+        };
+        const options = {
+          upsert: true,
+        };
+        await artifactsCollection.updateOne(filter, updateDoc, options);
+      }
+
+      res.send(result);
+    });
 
     // ALL GET requests
 
