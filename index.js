@@ -156,6 +156,14 @@ async function run() {
     });
 
     // Top Artifacts
+    app.get("/top-artifacts", async (req, res) => {
+      const result = await artifactsCollection
+        .find()
+        .sort({ liked_count: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
 
     // Get Single Artifact details
 
