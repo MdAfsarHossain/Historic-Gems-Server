@@ -95,6 +95,13 @@ async function run() {
 
     // ALL POST requests
     // Create new artifact data
+    app.post("/create-artifact", verifyToken, async (req, res) => {
+      const newArtifacts = req?.body;
+      // console.log(newArtifacts);
+      const result = await artifactsCollection.insertOne(newArtifacts);
+      res.send(result);
+      // res.send({ status: true });
+    });
 
     // Create new liked artifacts
 
