@@ -190,6 +190,18 @@ async function run() {
     });
 
     // Liked artifacts
+    app.get("/liked-artifacts/:email", verifyToken, async (req, res) => {
+      const email = req?.params?.email;
+      const tokenEmail = req?.user?.email;
+
+      if (tokenEmail !== email) {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+
+      const filter = { liked_by: email };
+      const result = await likedArtifactsCollection.find(filter).toArray();
+      res.send(result);
+    });
 
     // Check Liked
 
