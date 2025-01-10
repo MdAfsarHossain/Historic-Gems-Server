@@ -145,10 +145,16 @@ async function run() {
 
     // ALL GET requests
     app.get("/all-artifacts", async (req, res) => {
-      const searchQuery = req?.query?.search;
+      const filterData = req?.query?.filter;
+      const searchData = req?.query?.search;
       let query = {};
-      if (searchQuery) {
-        query.artifact_name = { $regex: searchQuery, $options: "i" };
+
+      if (filterData && filterData !== "All Type") {
+        query.artifact_type = filterData;
+      }
+
+      if (searchData) {
+        query.artifact_name = { $regex: searchData, $options: "i" };
       }
 
       const result = await artifactsCollection.find(query).toArray();
@@ -160,7 +166,7 @@ async function run() {
       const result = await artifactsCollection
         .find()
         .sort({ liked_count: -1 })
-        .limit(6)
+        .limit(8)
         .toArray();
       res.send(result);
     });
