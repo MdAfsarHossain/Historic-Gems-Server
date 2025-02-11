@@ -147,6 +147,7 @@ async function run() {
     app.get("/all-artifacts", async (req, res) => {
       const filterData = req?.query?.filter;
       const searchData = req?.query?.search;
+      const sort = req?.query?.sort;
       let query = {};
 
       if (filterData && filterData !== "All Type") {
@@ -158,6 +159,15 @@ async function run() {
       }
 
       const result = await artifactsCollection.find(query).toArray();
+
+      if (sort === "ASC" || sort === "DESC") {
+        result.sort((a, b) => {
+          const likedA = a?.liked_count || 0;
+          const likedB = b?.liked_count || 0;
+          return sort === "ASC" ? likedA - likedB : likedB - likedA;
+        });
+      }
+
       res.send(result);
     });
 
